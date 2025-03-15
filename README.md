@@ -148,7 +148,3 @@ npm run build
 # デモページを開く
 open demo/index.html
 ```
-
-## ライセンス
-
-MIT
