@@ -226,7 +226,356 @@
     <!-- デバッグ情報 -->
     <div class="debug-info" id="debug-info">ライブラリ読み込み中...</div>
 
-    <script type="module">
+    <!-- ライブラリを直接定義 -->
+    <script>
+      // アニメーションクラス
+      class Animations {
+        // スタイル要素
+        static styleElement = null;
+
+        // 基本スタイルを適用
+        static applyBaseStyles() {
+          if (!this.styleElement) {
+            this.styleElement = document.createElement("style");
+            document.head.appendChild(this.styleElement);
+          }
+
+          // 基本的なアニメーションスタイル
+          const baseStyles = `
+            /* アニメーション前の初期状態 */
+            .scroll-animate-init {
+              opacity: 0;
+              transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+              will-change: opacity, transform;
+            }
+
+            /* アニメーション実行時のスタイル */
+            .scroll-animate {
+              opacity: 1;
+              transform: none;
+            }
+          `;
+
+          this.styleElement.textContent = baseStyles;
+        }
+
+        // フェードインアニメーション
+        static fadeIn() {
+          this.addAnimation(
+            "fade-in",
+            `
+            .fade-in {
+              opacity: 0;
+            }
+            .fade-in.scroll-animate {
+              opacity: 1;
+            }
+          `
+          );
+        }
+
+        // 下からフェードインアニメーション
+        static fadeInUp() {
+          this.addAnimation(
+            "fade-in-up",
+            `
+            .fade-in-up {
+              opacity: 0;
+              transform: translateY(30px);
+            }
+            .fade-in-up.scroll-animate {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          `
+          );
+        }
+
+        // 上からフェードインアニメーション
+        static fadeInDown() {
+          this.addAnimation(
+            "fade-in-down",
+            `
+            .fade-in-down {
+              opacity: 0;
+              transform: translateY(-30px);
+            }
+            .fade-in-down.scroll-animate {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          `
+          );
+        }
+
+        // 左からフェードインアニメーション
+        static fadeInLeft() {
+          this.addAnimation(
+            "fade-in-left",
+            `
+            .fade-in-left {
+              opacity: 0;
+              transform: translateX(-30px);
+            }
+            .fade-in-left.scroll-animate {
+              opacity: 1;
+              transform: translateX(0);
+            }
+          `
+          );
+        }
+
+        // 右からフェードインアニメーション
+        static fadeInRight() {
+          this.addAnimation(
+            "fade-in-right",
+            `
+            .fade-in-right {
+              opacity: 0;
+              transform: translateX(30px);
+            }
+            .fade-in-right.scroll-animate {
+              opacity: 1;
+              transform: translateX(0);
+            }
+          `
+          );
+        }
+
+        // ズームインアニメーション
+        static zoomIn() {
+          this.addAnimation(
+            "zoom-in",
+            `
+            .zoom-in {
+              opacity: 0;
+              transform: scale(0.8);
+            }
+            .zoom-in.scroll-animate {
+              opacity: 1;
+              transform: scale(1);
+            }
+          `
+          );
+        }
+
+        // ズームアウトアニメーション
+        static zoomOut() {
+          this.addAnimation(
+            "zoom-out",
+            `
+            .zoom-out {
+              opacity: 0;
+              transform: scale(1.2);
+            }
+            .zoom-out.scroll-animate {
+              opacity: 1;
+              transform: scale(1);
+            }
+          `
+          );
+        }
+
+        // フリップアニメーション
+        static flip() {
+          this.addAnimation(
+            "flip",
+            `
+            .flip {
+              opacity: 0;
+              transform: perspective(400px) rotateY(90deg);
+            }
+            .flip.scroll-animate {
+              opacity: 1;
+              transform: perspective(400px) rotateY(0);
+            }
+          `
+          );
+        }
+
+        // バウンスアニメーション
+        static bounce() {
+          this.addAnimation(
+            "bounce",
+            `
+            @keyframes scroll-bounce {
+              0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+              }
+              40% {
+                transform: translateY(-20px);
+              }
+              60% {
+                transform: translateY(-10px);
+              }
+            }
+            .bounce {
+              opacity: 0;
+            }
+            .bounce.scroll-animate {
+              opacity: 1;
+              animation: scroll-bounce 1s;
+            }
+          `
+          );
+        }
+
+        // アニメーションスタイルを追加
+        static addAnimation(name, css) {
+          if (!this.styleElement) {
+            this.applyBaseStyles();
+          }
+
+          this.styleElement.textContent += css;
+        }
+      }
+
+      // ScrollTriggerクラス
+      class ScrollTrigger {
+        constructor(options = {}) {
+          this.options = {
+            animationClass: "scroll-animate",
+            initialClass: "scroll-animate-init",
+            delay: 0,
+            threshold: 0.1,
+            once: true,
+            ...options,
+          };
+
+          this.observer = null;
+          this.elements = new Map();
+          this.init();
+        }
+
+        // 初期化処理
+        init() {
+          const observerOptions = {
+            root: null, // ビューポートを基準にする
+            rootMargin: "0px",
+            threshold: this.options.threshold,
+          };
+
+          this.observer = new IntersectionObserver(
+            this.handleIntersect.bind(this),
+            observerOptions
+          );
+        }
+
+        // 要素が交差したときの処理
+        handleIntersect(entries, observer) {
+          entries.forEach((entry) => {
+            // 要素がビューポートに入った場合
+            if (entry.isIntersecting) {
+              const element = entry.target;
+
+              // すでにアニメーション済みの要素はスキップ
+              if (this.elements.get(element)) return;
+
+              // アニメーション前のコールバックを実行
+              if (this.options.onBeforeAnimate) {
+                this.options.onBeforeAnimate(element);
+              }
+
+              // 遅延時間が設定されている場合は遅延実行
+              setTimeout(() => {
+                if (this.options.initialClass) {
+                  element.classList.remove(this.options.initialClass);
+                }
+
+                if (this.options.animationClass) {
+                  element.classList.add(this.options.animationClass);
+                }
+
+                // アニメーション後のコールバックを実行
+                if (this.options.onAfterAnimate) {
+                  this.options.onAfterAnimate(element);
+                }
+
+                // 一度だけ実行する設定の場合は監視を解除
+                if (this.options.once && this.observer) {
+                  this.observer.unobserve(element);
+                  this.elements.set(element, true);
+                }
+              }, this.options.delay || 0);
+            }
+          });
+        }
+
+        // 要素を監視対象に追加
+        add(elements) {
+          const targetElements = [];
+
+          if (typeof elements === "string") {
+            // セレクタの場合は要素を取得
+            document
+              .querySelectorAll(elements)
+              .forEach((el) => targetElements.push(el));
+          } else if (elements instanceof Element) {
+            // 単一要素の場合
+            targetElements.push(elements);
+          } else if (elements instanceof NodeList || Array.isArray(elements)) {
+            // 複数要素の場合
+            Array.from(elements).forEach((el) => {
+              if (el instanceof Element) targetElements.push(el);
+            });
+          }
+
+          // 各要素を監視対象に追加
+          targetElements.forEach((element) => {
+            if (!this.elements.has(element) && this.observer) {
+              // 初期クラスを追加
+              if (this.options.initialClass) {
+                element.classList.add(this.options.initialClass);
+              }
+
+              this.observer.observe(element);
+              this.elements.set(element, false);
+            }
+          });
+        }
+
+        // 要素の監視を解除
+        remove(elements) {
+          const targetElements = [];
+
+          if (typeof elements === "string") {
+            document
+              .querySelectorAll(elements)
+              .forEach((el) => targetElements.push(el));
+          } else if (elements instanceof Element) {
+            targetElements.push(elements);
+          } else if (elements instanceof NodeList || Array.isArray(elements)) {
+            Array.from(elements).forEach((el) => {
+              if (el instanceof Element) targetElements.push(el);
+            });
+          }
+
+          targetElements.forEach((element) => {
+            if (this.observer) {
+              this.observer.unobserve(element);
+              this.elements.delete(element);
+            }
+          });
+        }
+
+        // すべての要素の監視を解除
+        destroy() {
+          if (this.observer) {
+            this.observer.disconnect();
+            this.elements.clear();
+            this.observer = null;
+          }
+        }
+
+        // 監視中の要素を再スキャン
+        refresh() {
+          this.destroy();
+          this.init();
+        }
+      }
+    </script>
+
+    <script>
       // デバッグ情報を表示する関数
       function updateDebugInfo(message) {
         const debugElement = document.getElementById("debug-info");
@@ -236,84 +585,69 @@
       }
 
       try {
-        updateDebugInfo("ライブラリをインポート中...");
+        updateDebugInfo("ライブラリを初期化中...");
 
-        // ライブラリをインポート
-        import("../dist/index.js")
-          .then((module) => {
-            const ScrollTrigger = module.default;
-            const Animations = module.Animations;
+        updateDebugInfo("アニメーションスタイルを適用中...");
 
-            updateDebugInfo("アニメーションスタイルを適用中...");
+        // 基本的なアニメーションスタイルを適用
+        Animations.applyBaseStyles();
 
-            // 基本的なアニメーションスタイルを適用
-            Animations.applyBaseStyles();
+        // 各種アニメーションを登録
+        Animations.fadeIn();
+        Animations.fadeInUp();
+        Animations.fadeInDown();
+        Animations.fadeInLeft();
+        Animations.fadeInRight();
+        Animations.zoomIn();
+        Animations.zoomOut();
+        Animations.flip();
+        Animations.bounce();
 
-            // 各種アニメーションを登録
-            Animations.fadeIn();
-            Animations.fadeInUp();
-            Animations.fadeInDown();
-            Animations.fadeInLeft();
-            Animations.fadeInRight();
-            Animations.zoomIn();
-            Animations.zoomOut();
-            Animations.flip();
-            Animations.bounce();
+        updateDebugInfo("スクロールトリガーを初期化中...");
 
-            updateDebugInfo("スクロールトリガーを初期化中...");
-
-            // スクロールトリガーを初期化
-            const scrollTrigger = new ScrollTrigger({
-              threshold: 0.2,
-              once: true,
-              onBeforeAnimate: (element) => {
-                updateDebugInfo(
-                  `アニメーション開始: ${
-                    element.textContent || element.className
-                  }`
-                );
-              },
-              onAfterAnimate: (element) => {
-                updateDebugInfo(
-                  `アニメーション完了: ${
-                    element.textContent || element.className
-                  }`
-                );
-
-                // 3秒後にデバッグ情報をクリア
-                setTimeout(() => {
-                  updateDebugInfo("すべて正常に動作中");
-                }, 3000);
-              },
-            });
-
-            updateDebugInfo("アニメーション要素を設定中...");
-
-            // アニメーション要素を取得して設定
-            document.querySelectorAll("[data-animation]").forEach((element) => {
-              const animationType = element.getAttribute("data-animation");
-              const delay = element.getAttribute("data-delay");
-
-              // アニメーションクラスを追加
-              element.classList.add(animationType);
-
-              // 遅延時間が指定されている場合は設定
-              if (delay) {
-                element.style.transitionDelay = `${delay}ms`;
-              }
-
-              // 要素を監視対象に追加
-              scrollTrigger.add(element);
-            });
-
+        // スクロールトリガーを初期化
+        const scrollTrigger = new ScrollTrigger({
+          threshold: 0.2,
+          once: true,
+          onBeforeAnimate: (element) => {
             updateDebugInfo(
-              "初期化完了。スクロールしてアニメーションをご確認ください。"
+              `アニメーション開始: ${element.textContent || element.className}`
             );
-          })
-          .catch((error) => {
-            updateDebugInfo(`エラーが発生しました: ${error.message}`);
-            console.error("ライブラリの読み込みエラー:", error);
-          });
+          },
+          onAfterAnimate: (element) => {
+            updateDebugInfo(
+              `アニメーション完了: ${element.textContent || element.className}`
+            );
+
+            // 3秒後にデバッグ情報をクリア
+            setTimeout(() => {
+              updateDebugInfo("すべて正常に動作中");
+            }, 3000);
+          },
+        });
+
+        updateDebugInfo("アニメーション要素を設定中...");
+
+        // アニメーション要素を取得して設定
+        document.querySelectorAll("[data-animation]").forEach((element) => {
+          const animationType = element.getAttribute("data-animation");
+          const delay = element.getAttribute("data-delay");
+
+          // アニメーションクラスを追加
+          element.classList.add(animationType);
+
+          // 遅延時間が指定されている場合は設定
+          if (delay) {
+            element.style.transitionDelay = `${delay}ms`;
+          }
+
+          // 要素を監視対象に追加
+          scrollTrigger.add(element);
+        });
+
+        updateDebugInfo(
+          "初期化完了。スクロールしてアニメーションをご確認ください。"
+        );
       } catch (error) {
         updateDebugInfo(`予期せぬエラーが発生しました: ${error.message}`);
         console.error("予期せぬエラー:", error);
