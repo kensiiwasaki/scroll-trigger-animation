@@ -132,6 +132,19 @@
         padding: 2rem 0;
         margin-top: 3rem;
       }
+
+      /* デバッグ用スタイル */
+      .debug-info {
+        position: fixed;
+        bottom: 10px;
+        right: 10px;
+        background: rgba(0, 0, 0, 0.7);
+        color: white;
+        padding: 10px;
+        border-radius: 5px;
+        font-size: 12px;
+        z-index: 9999;
+      }
     </style>
   </head>
   <body>
@@ -210,46 +223,101 @@
       </div>
     </footer>
 
+    <!-- デバッグ情報 -->
+    <div class="debug-info" id="debug-info">ライブラリ読み込み中...</div>
+
     <script type="module">
-      // ライブラリをインポート
-      import ScrollTrigger, { Animations } from "../dist/index.js";
-
-      // 基本的なアニメーションスタイルを適用
-      Animations.applyBaseStyles();
-
-      // 各種アニメーションを登録
-      Animations.fadeIn();
-      Animations.fadeInUp();
-      Animations.fadeInDown();
-      Animations.fadeInLeft();
-      Animations.fadeInRight();
-      Animations.zoomIn();
-      Animations.zoomOut();
-      Animations.flip();
-      Animations.bounce();
-
-      // スクロールトリガーを初期化
-      const scrollTrigger = new ScrollTrigger({
-        threshold: 0.2,
-        once: true,
-      });
-
-      // アニメーション要素を取得して設定
-      document.querySelectorAll("[data-animation]").forEach((element) => {
-        const animationType = element.getAttribute("data-animation");
-        const delay = element.getAttribute("data-delay");
-
-        // アニメーションクラスを追加
-        element.classList.add(animationType);
-
-        // 遅延時間が指定されている場合は設定
-        if (delay) {
-          scrollTrigger.add(element);
-          element.style.transitionDelay = `${delay}ms`;
-        } else {
-          scrollTrigger.add(element);
+      // デバッグ情報を表示する関数
+      function updateDebugInfo(message) {
+        const debugElement = document.getElementById("debug-info");
+        if (debugElement) {
+          debugElement.textContent = message;
         }
-      });
+      }
+
+      try {
+        updateDebugInfo("ライブラリをインポート中...");
+
+        // ライブラリをインポート
+        import("../dist/index.js")
+          .then((module) => {
+            const ScrollTrigger = module.default;
+            const Animations = module.Animations;
+
+            updateDebugInfo("アニメーションスタイルを適用中...");
+
+            // 基本的なアニメーションスタイルを適用
+            Animations.applyBaseStyles();
+
+            // 各種アニメーションを登録
+            Animations.fadeIn();
+            Animations.fadeInUp();
+            Animations.fadeInDown();
+            Animations.fadeInLeft();
+            Animations.fadeInRight();
+            Animations.zoomIn();
+            Animations.zoomOut();
+            Animations.flip();
+            Animations.bounce();
+
+            updateDebugInfo("スクロールトリガーを初期化中...");
+
+            // スクロールトリガーを初期化
+            const scrollTrigger = new ScrollTrigger({
+              threshold: 0.2,
+              once: true,
+              onBeforeAnimate: (element) => {
+                updateDebugInfo(
+                  `アニメーション開始: ${
+                    element.textContent || element.className
+                  }`
+                );
+              },
+              onAfterAnimate: (element) => {
+                updateDebugInfo(
+                  `アニメーション完了: ${
+                    element.textContent || element.className
+                  }`
+                );
+
+                // 3秒後にデバッグ情報をクリア
+                setTimeout(() => {
+                  updateDebugInfo("すべて正常に動作中");
+                }, 3000);
+              },
+            });
+
+            updateDebugInfo("アニメーション要素を設定中...");
+
+            // アニメーション要素を取得して設定
+            document.querySelectorAll("[data-animation]").forEach((element) => {
+              const animationType = element.getAttribute("data-animation");
+              const delay = element.getAttribute("data-delay");
+
+              // アニメーションクラスを追加
+              element.classList.add(animationType);
+
+              // 遅延時間が指定されている場合は設定
+              if (delay) {
+                element.style.transitionDelay = `${delay}ms`;
+              }
+
+              // 要素を監視対象に追加
+              scrollTrigger.add(element);
+            });
+
+            updateDebugInfo(
+              "初期化完了。スクロールしてアニメーションをご確認ください。"
+            );
+          })
+          .catch((error) => {
+            updateDebugInfo(`エラーが発生しました: ${error.message}`);
+            console.error("ライブラリの読み込みエラー:", error);
+          });
+      } catch (error) {
+        updateDebugInfo(`予期せぬエラーが発生しました: ${error.message}`);
+        console.error("予期せぬエラー:", error);
+      }
     </script>
   </body>
 </html>
