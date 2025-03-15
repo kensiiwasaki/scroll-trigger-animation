@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>スクロールトリガーアニメーションデモ</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Helvetica Neue", Arial, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        background-color: #f5f5f5;
+      }
+
+      header {
+        background-color: #2c3e50;
+        color: white;
+        padding: 2rem 0;
+        text-align: center;
+        position: relative;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 2rem;
+      }
+
+      section {
+        padding: 5rem 0;
+      }
+
+      h1 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+      }
+
+      h2 {
+        font-size: 2rem;
+        margin-bottom: 2rem;
+        text-align: center;
+      }
+
+      p {
+        margin-bottom: 1.5rem;
+        font-size: 1.1rem;
+      }
+
+      .box-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 2rem;
+        margin: 3rem 0;
+      }
+
+      .box {
+        width: 300px;
+        height: 200px;
+        background-color: #3498db;
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 1.5rem;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .box:nth-child(2) {
+        background-color: #e74c3c;
+      }
+
+      .box:nth-child(3) {
+        background-color: #2ecc71;
+      }
+
+      .box:nth-child(4) {
+        background-color: #f39c12;
+      }
+
+      .box:nth-child(5) {
+        background-color: #9b59b6;
+      }
+
+      .box:nth-child(6) {
+        background-color: #1abc9c;
+      }
+
+      .spacer {
+        height: 50vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 1.2rem;
+        color: #7f8c8d;
+        font-style: italic;
+      }
+
+      .features {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 2rem;
+        justify-content: center;
+      }
+
+      .feature {
+        flex: 1;
+        min-width: 300px;
+        background-color: white;
+        padding: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .feature h3 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        color: #2c3e50;
+      }
+
+      footer {
+        background-color: #2c3e50;
+        color: white;
+        text-align: center;
+        padding: 2rem 0;
+        margin-top: 3rem;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="container">
+        <h1>スクロールトリガーアニメーション</h1>
+        <p>
+          スクロールに合わせて要素をアニメーションさせるシンプルなライブラリ
+        </p>
+      </div>
+    </header>
+
+    <section>
+      <div class="container">
+        <h2>基本的なアニメーション</h2>
+        <p>
+          下にスクロールして、様々なアニメーション効果をご覧ください。各ボックスは異なるアニメーションを使用しています。
+        </p>
+
+        <div class="box-container">
+          <div class="box" data-animation="fade-in">フェードイン</div>
+          <div class="box" data-animation="fade-in-up">下から</div>
+          <div class="box" data-animation="fade-in-down">上から</div>
+          <div class="box" data-animation="fade-in-left">左から</div>
+          <div class="box" data-animation="fade-in-right">右から</div>
+          <div class="box" data-animation="zoom-in">ズームイン</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="spacer">↓ 下にスクロールしてください ↓</div>
+
+    <section style="background-color: #ecf0f1">
+      <div class="container">
+        <h2>特徴</h2>
+        <div class="features">
+          <div class="feature" data-animation="fade-in-up" data-delay="0">
+            <h3>Intersection Observer API</h3>
+            <p>
+              最新のIntersection Observer
+              APIを使用して、スクロール位置を効率的に検知します。これにより、メインスレッドへの負荷を最小限に抑え、スムーズなアニメーションを実現します。
+            </p>
+          </div>
+          <div class="feature" data-animation="fade-in-up" data-delay="200">
+            <h3>カスタマイズ可能</h3>
+            <p>
+              アニメーションの種類、遅延時間、しきい値など、様々なオプションをカスタマイズできます。また、独自のアニメーションを定義することも可能です。
+            </p>
+          </div>
+          <div class="feature" data-animation="fade-in-up" data-delay="400">
+            <h3>シンプルなAPI</h3>
+            <p>
+              使いやすいAPIを提供し、わずか数行のコードで実装できます。既存のCSSフレームワークとも簡単に連携できます。
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="spacer">↓ もう少し下にスクロールしてください ↓</div>
+
+    <section>
+      <div class="container">
+        <h2>その他のアニメーション</h2>
+        <div class="box-container">
+          <div class="box" data-animation="zoom-out">ズームアウト</div>
+          <div class="box" data-animation="flip">フリップ</div>
+          <div class="box" data-animation="bounce">バウンス</div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="container">
+        <p>スクロールトリガーアニメーションライブラリ デモページ</p>
+      </div>
+    </footer>
+
+    <script type="module">
+      // ライブラリをインポート
+      import ScrollTrigger, { Animations } from "../dist/index.js";
+
+      // 基本的なアニメーションスタイルを適用
+      Animations.applyBaseStyles();
+
+      // 各種アニメーションを登録
+      Animations.fadeIn();
+      Animations.fadeInUp();
+      Animations.fadeInDown();
+      Animations.fadeInLeft();
+      Animations.fadeInRight();
+      Animations.zoomIn();
+      Animations.zoomOut();
+      Animations.flip();
+      Animations.bounce();
+
+      // スクロールトリガーを初期化
+      const scrollTrigger = new ScrollTrigger({
+        threshold: 0.2,
+        once: true,
+      });
+
+      // アニメーション要素を取得して設定
+      document.querySelectorAll("[data-animation]").forEach((element) => {
+        const animationType = element.getAttribute("data-animation");
+        const delay = element.getAttribute("data-delay");
+
+        // アニメーションクラスを追加
+        element.classList.add(animationType);
+
+        // 遅延時間が指定されている場合は設定
+        if (delay) {
+          scrollTrigger.add(element);
+          element.style.transitionDelay = `${delay}ms`;
+        } else {
+          scrollTrigger.add(element);
+        }
+      });
+    </script>
+  </body>
+</html>
