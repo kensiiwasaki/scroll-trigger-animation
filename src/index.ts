@@ -194,3 +194,31 @@ export { Animations, AnimationOptions };
 
 // デフォルトエクスポート
 export default ScrollTrigger;
+
+// グローバル変数として公開
+declare global {
+  interface Window {
+    ScrollTrigger: typeof ScrollTrigger;
+    ScrollTriggerAnimations: typeof Animations;
+  }
+}
+
+// ブラウザ環境の場合はグローバル変数に追加
+if (typeof window !== "undefined") {
+  window.ScrollTrigger = ScrollTrigger;
+  window.ScrollTriggerAnimations = Animations;
+}
+
+// 以下のコードを追加して、IIFEとしてグローバル変数を公開
+(function (global: any) {
+  if (typeof global.document !== "undefined") {
+    global.ScrollTrigger = ScrollTrigger;
+    global.ScrollTriggerAnimations = Animations;
+  }
+})(
+  typeof window !== "undefined"
+    ? window
+    : typeof global !== "undefined"
+    ? global
+    : self
+);
