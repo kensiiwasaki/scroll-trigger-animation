@@ -3,6 +3,9 @@
  * スクロール時に要素がビューポートに入ったときにアニメーションを実行するライブラリ
  */
 
+// アニメーションユーティリティをインポート
+import { Animations, AnimationOptions } from "./animations";
+
 export interface ScrollTriggerOptions {
   /** アニメーション実行時に追加するCSSクラス名 */
   animationClass?: string;
@@ -185,9 +188,6 @@ export class ScrollTrigger {
     this.init();
   }
 }
-
-// アニメーションユーティリティをインポート
-import { Animations, AnimationOptions } from "./animations";
 
 // アニメーションユーティリティをエクスポート
 export { Animations, AnimationOptions };
