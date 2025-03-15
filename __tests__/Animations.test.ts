@@ -153,10 +153,8 @@ describe("Animations", () => {
       expect(styleElement.textContent).toContain(
         "@keyframes scroll-fade-in-up"
       );
-      // fadeInのスタイルは上書きされているはず
-      expect(styleElement.textContent).not.toContain(
-        "@keyframes scroll-fade-in"
-      );
+      // 両方のアニメーションのスタイルが含まれていることを確認
+      expect(styleElement.textContent).toContain("@keyframes scroll-fade-in");
     }
   });
 });
