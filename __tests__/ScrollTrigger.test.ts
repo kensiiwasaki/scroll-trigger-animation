@@ -6,7 +6,7 @@ import ScrollTrigger from "../src/index";
 
 // IntersectionObserverのモック
 class MockIntersectionObserver {
-  readonly root: Element | null;
+  readonly root: Element | Document | null;
   readonly rootMargin: string;
   readonly thresholds: ReadonlyArray<number>;
 
@@ -48,7 +48,10 @@ class MockIntersectionObserver {
             ? element.getBoundingClientRect()
             : new DOMRect(),
           isIntersecting,
-          rootBounds: this.root ? this.root.getBoundingClientRect() : null,
+          rootBounds:
+            this.root instanceof Element
+              ? this.root.getBoundingClientRect()
+              : null,
           target: element,
           time: Date.now(),
         } as IntersectionObserverEntry)
