@@ -1,0 +1,23 @@
+{
+  "name": "scroll-trigger-animation",
+  "version": "1.0.0",
+  "description": "スクロールトリガーでアニメーションを実行するライブラリ",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "scroll",
+    "animation",
+    "intersection-observer",
+    "typescript"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
